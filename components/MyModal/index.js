@@ -17,7 +17,12 @@ const MyModal = ({ openModal, containerStyle, content, position = 'center' }) =>
   });
 
   return (
-    <Modal style={styles.modal} visible={openModal} animationType="slide" transparent>
+    <Modal
+      style={styles.modal}
+      visible={openModal}
+      animationType="slide"
+      transparent
+    >
       <View style={styles.modalView}>
         <View style={[styles.modalContainer, containerStyle]}>
           {content}

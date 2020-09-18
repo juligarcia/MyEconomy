@@ -5,7 +5,7 @@ const Submit = ({ nextStep }) => {
 
   return(
     <View style={styles.container}>
-      <Button title="Create!" color="black" onPress={nextStep} />
+      <Button title="Create!" color="white" onPress={nextStep} />
     </View>
   )
 }
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%'
-  }
+  },
 });
 
 export default Submit;

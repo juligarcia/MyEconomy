@@ -12,9 +12,9 @@ const MyCards = ({ myCards, addCard, addingCard }) => {
   const AddIcon = <Feather name="chevrons-up" size={20} color="#a6a6a6" />;
 
   const configureCard = ({ item, index, separators }) => {
-    const { cardName, color, key, closingDate } = item;
+    const { cardName, color, key, closingDate, payments } = item;
     return(
-      <MyCard key={key} cardName={cardName} color={color} closingDate={closingDate}/>
+      <MyCard key={key} cardName={cardName} color={color} payments={payments} closingDate={closingDate}/>
     )
   };
   return (

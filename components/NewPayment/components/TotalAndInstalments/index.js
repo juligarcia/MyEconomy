@@ -1,66 +1,138 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, Switch, SafeAreaView } from 'react-native';
 import { Formik } from 'formik';
 import { Picker } from '@react-native-community/picker';
+import MyLabel from '../../../MyLabel';
+import MyButton from '../../../MyButton';
 
 const TotalAndInstalments = ({ addPaymentData, nextStep }) => {
 
-  const [instalments, setInstalments] = useState('0');
+  const [instalments, setInstalments] = useState('1');
+  const [monthly, setMonthly] = useState(false);
+
+  const toggleMonthly = () => {
+    setInstalments('1');
+    setMonthly(!monthly);
+  };
 
   const maxInstalment = 36;
 
   const onSubmit = values => {
-    addPaymentData(values);
+    addPaymentData({...values, monthly, instalments});
     nextStep();
   };
 
   return (
-    <View>
+    <SafeAreaView>
       <Formik
         initialValues={{
-          paymentTotal: '',
-          initialInstalments: instalments
+          paymentTotal: ''
         }}
         onSubmit={onSubmit}
       >
         {(formikProps) => (
-          <View>
+          <View style={{ justifyContent: 'flex-end' }}>
             <TextInput
+              placeholderTextColor="#D7D7D7"
+              textAlign="center"
+              selectionColor="white"
+              style={styles.textInput}
               keyboardType='numeric'
               placeholder="Total payment amount"
               onChangeText={formikProps.handleChange('paymentTotal')}
               value={formikProps.values.paymentTotal}
             />
+            <MyLabel
+              text="How many instalments?"
+              styles={{
+                container: styles.labelContainer,
+                text: styles.label
+              }}
+            />
             <Picker
               selectedValue={instalments}
               onValueChange={selected => setInstalments(selected)}
-              style={styles.picker}
+              itemStyle={styles.pickerItem}
             >
-              {new Array(maxInstalment).fill(0).map((item, index) => <Picker.Item label={`${index + 1}`} value={`${index + 1}`} />)}
+              {!monthly ? (
+                new Array(maxInstalment).fill(0).map((item, index) => <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />)
+              ) : (
+                <Picker.Item key={1} label='1' value='1' />
+              )}
             </Picker>
-            <Button
-              title="Add payment!"
-              color='white'
+            <View style={styles.switch}>
+              <MyLabel
+                text="Monthly payment?"
+                styles={{
+                  container: styles.monthlyLabel,
+                  text: styles.label
+                }}
+              />
+              <Switch
+                ios_backgroundColor='#D7D7D7'
+                onValueChange={toggleMonthly}
+                value={monthly}
+              />
+            </View>
+            <MyButton
+              content="Add payment!"
               onPress={
-                formikProps.values.paymentAlias ? (
+                formikProps.values.paymentTotal ? (
                   formikProps.handleSubmit
                 ) : (
-                  () => alert('No alias')
+                  () => alert('You forgot to enter an amount!')
                 )
               }
+              styles={{
+                text: styles.buttonText,
+                container: styles.button
+              }}
             />
           </View>
         )}
       </Formik>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  picker: {
+  pickerItem: {
+    color: 'white'
+  },
+  textInput: {
+    marginBottom: '10%',
     color: 'white',
-    width: '100%',
-    height: '70%'
+    fontSize: 20,
+  },
+  label: {
+    color: '#D7D7D7',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  labelContainer: {
+    marginBottom: '5%'
+  },
+  button: {
+    borderWidth: 2,
+    borderColor: 'white',
+    marginTop: '5%',
+    borderRadius: 10,
+    width: '100%'
+  },
+  buttonText: {
+    padding:10,
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 20
+  },
+  switch: {
+    flexDirection: 'row',
+    marginBottom: '5%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  monthlyLabel: {
+    marginRight: '5%'
   }
 })
 

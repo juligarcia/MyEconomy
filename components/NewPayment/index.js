@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Steps from './steps';
 
-const NewPayment = ({ addPayment }) => {
+const NewPayment = ({ addPayment, onClose, incId, nextId }) => {
 
   const [stepNumber, setStep] = useState(0);
   const [payment, updatePayment] = useState({});
 
   const addCreatedPayment = () => {
     addPayment(payment);
+    incId();
+    onClose();
   };
 
   const nextStep = () => {
@@ -19,7 +21,7 @@ const NewPayment = ({ addPayment }) => {
   const isLastStep = Steps.length - 1 === stepNumber;
 
   const addPaymentData = data => {
-    updatePayment(prevState => Object.assign({}, prevState, data));
+    updatePayment(prevState => Object.assign({}, prevState, data, { key: nextId }));
   };
 
   return(

@@ -7,7 +7,7 @@ import MyCardBar from './components/MyCardBar';
 import MyCardSummary from './components/MyCardSummary';
 import MyDummyCard from '../MyDummyCard';
 
-const MyCard = ({ cardName, color, closingDate }) => {
+const MyCard = ({ cardName, color, closingDate, payments }) => {
 
   const width = useWindowDimensions().width;
 
@@ -59,7 +59,7 @@ const MyCard = ({ cardName, color, closingDate }) => {
       <MyDummyCard key={0} containerStyle={[styles.smallContainer, styles.delete, styles.center]} Icon={DeleteIcon} />,
       <View key={1} style={styles.container}>
         <MyCardBar cardName={cardName} closingDate={closingDate} />
-        <MyCardSummary cardInfo={'Tarjeta principal, se debe abonar $15434,64'} />
+        <MyCardSummary cardInfo={payments && payments[payments.length - 1].paymentAlias} />
       </View>,
       <MyDummyCard key={2} containerStyle={[styles.smallContainer, styles.add, styles.center]} Icon={AddIcon} before/>
     ]}

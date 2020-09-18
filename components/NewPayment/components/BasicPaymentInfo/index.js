@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
+import MyButton from '../../../MyButton';
 
 const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
 
@@ -14,7 +15,7 @@ const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
   };
 
   return (
-    <View>
+    <View >
       <Formik
         initialValues={{
           paymentAlias: ''
@@ -23,7 +24,11 @@ const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
       >
         {(formikProps) => (
           <View>
-            <TextInput 
+            <TextInput
+              style={styles.textInput}
+              placeholderTextColor="#D7D7D7"
+              textAlign="center"
+              selectionColor="white"
               placeholder="Payment Alias"
               onChangeText={formikProps.handleChange('paymentAlias')}
               value={formikProps.values.paymentAlias}
@@ -45,5 +50,14 @@ const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  textInput: {
+    color: 'white',
+    marginBottom: '5%',
+    marginTop: '5%',
+    fontSize: 20
+  }
+})
 
 export default BasicPaymentInfo;
