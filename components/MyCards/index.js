@@ -1,24 +1,67 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, FlatList, useWindowDimensions, View, Button, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, FlatList, useWindowDimensions, View, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Feather } from '@expo/vector-icons'; 
 import MyDummyCard from '../MyDummyCard';
 import MyCard from '../MyCard';
+import MyExpandedCard from '../MyExpandedCard';
+import { scaleSize } from '../../aux/dimensions';
+import { globalStyles } from '../../aux/globalStyles';
+import MyModal from '../MyModal';
+import NewPayment from '../NewPayment';
+import * as cardActions from '../../redux/cards/actions';
 
-const MyCards = ({ myCards, addCard, addingCard }) => {
+const MyCards = ({ myCards, addCard, addingCard, dispatch }) => {
 
+  const [selectedCard, setSelectedCard] = useState(null);
+  const selectCard = key => (width, height, xOff, yOff) => setSelectedCard({key, width, height, xOff, yOff});
   const width = useWindowDimensions().width;
 
-  const AddIcon = <Feather name="chevrons-up" size={20} color="#a6a6a6" />;
+  const [newPayment, setNewPayment] = useState(-1);
+  const openNewPayment = key => () => setNewPayment(key);
+  const nextId = myCards.find(card => card.key === newPayment)?.nextPaymentId;
+
+  const AddIcon = <Feather name="chevrons-down" size={scaleSize(5)} color="#a6a6a6" />;
 
   const configureCard = ({ item, index, separators }) => {
     const { cardName, color, key, closingDate, payments } = item;
     return(
-      <MyCard key={key} cardName={cardName} color={color} payments={payments} closingDate={closingDate}/>
+      <MyCard
+        key={key}
+        cardName={cardName}
+        color={color}
+        payments={payments}
+        closingDate={closingDate}
+        selectCard={selectCard(key)}
+        addPayment={openNewPayment(key)}
+      />
     )
   };
+
+  const unExpand = () => setSelectedCard(null);
+
   return (
     <View style={styles.container}>
+      {selectedCard && (
+        <MyExpandedCard
+          card={myCards.find(card => card.key == selectedCard.key)}
+          cardData={selectedCard}
+          unExpand={unExpand}
+        />
+      )}
+      <MyModal
+        openModal={newPayment > -1}
+        content={
+          <NewPayment
+            onClose={() => setNewPayment(-1)}
+            addPayment={payment => dispatch(cardActions.addPayment(payment, newPayment))}
+            nextId={nextId}
+            incId={() => dispatch(cardActions.updateNextPaymentId(nextId + 1, newPayment))}
+          />
+        }
+        containerStyle={[globalStyles.container, styles.addPaymentContainer]}
+        position="flex-start"
+      />
       <FlatList
         refreshControl={
           <RefreshControl refreshing={addingCard} onRefresh={addCard} />
@@ -27,7 +70,7 @@ const MyCards = ({ myCards, addCard, addingCard }) => {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <MyDummyCard
-            label="Create New Card!"
+            label="Swipe Down to Create a New Card!"
             labelStyle={styles.addLabel}
             Icon={AddIcon}
             both
@@ -54,9 +97,13 @@ const styles = StyleSheet.create({
     color: '#A6A6A6',
   },
   addConatiner: {
+    height: scaleSize(12),
     width: '90%',
     marginLeft: '5%',
     marginRight: '5%'
+  },
+  addPaymentContainer: {
+    backgroundColor: '#0E78C2'
   }
 })
 

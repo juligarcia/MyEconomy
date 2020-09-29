@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import CircularColorButton from './components/CircularColorButton';
 
-const ColorPicker = ({ colors, setColor, selectedColor }) => {
+const ColorPicker = ({ colors, setColor, selectedColor, containerStyle, highlightColor }) => {
 
   const colorLabels = Object.keys(colors);
   const colorValues = Object.values(colors);
@@ -12,9 +12,15 @@ const ColorPicker = ({ colors, setColor, selectedColor }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       {colorValues.map((colorValue, index) => (
-        <CircularColorButton key={index} selected={selectedColor == colorValue} colorValue={colorValue} onPress={setPickedColor(colorValue)} />
+        <CircularColorButton
+          highlightColor={highlightColor}
+          key={index}
+          selected={selectedColor == colorValue}
+          colorValue={colorValue}
+          onPress={setPickedColor(colorValue)}
+        />
       ))}
     </View>
   );

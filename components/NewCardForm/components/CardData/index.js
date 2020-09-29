@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, Modal } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Animated } from 'react-native';
 import MyLabel from '../../../MyLabel';
 import MyButton from '../../../MyButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { screenWidth, subtitleFontLarge } from '../../../../aux/dimensions';
+import { colorLuminance, isDark } from '../../../../aux/functions';
+import { globalStyles } from '../../../../aux/globalStyles';
+import { Octicons } from '@expo/vector-icons';
 
-const CardData = ({ addCardData, nextStep }) => {
+const CardData = ({ card, addCardData, nextStep }) => {
 
   const [date, setDate] = useState(new Date());
+  const animatedX = useRef(new Animated.Value(screenWidth)).current;
 
   const onSubmit = date => () => {
-    addCardData(date);
-    nextStep();
+    Animated.timing(animatedX, {
+      toValue: -screenWidth,
+      duration: 300,
+      useNativeDriver: false
+    }).start(() => {
+      addCardData(date);
+      nextStep();
+    });
   };
+
+  useEffect(() => {
+    Animated.timing(animatedX, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false
+    }).start();
+  }, []);
+
 
   const formatNextMonth = () => {
     const currentDate = new Date();
@@ -33,90 +53,82 @@ const CardData = ({ addCardData, nextStep }) => {
     setDate(selectedDate);
   };
 
+  const colorVariant1 = card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1);
+  const colorVariant2 = colorVariant1 && colorLuminance(colorVariant1, isDark(colorVariant1) ? 0.5 : -0.3);
+
+  const styles = StyleSheet.create({
+    pickerContainer: {
+      paddingTop: '5%',
+      paddingBottom: '5%',
+      height: '30%',
+      width: '85%',
+      backgroundColor: 'white',
+      borderRadius: 10,
+      borderWidth: 6,
+      borderColor: colorVariant1
+    },
+    picker: {
+      height: '100%'
+    },
+    button: {
+      backgroundColor: colorVariant1
+    }
+  });  
+
   return(
-    <View style={styles.container}>
+    <Animated.View style={[globalStyles.container, { left: animatedX }]}>
       <MyLabel
         text="Card information"
         styles={{
-          container: styles.titleContainer, text: styles.title
+          text: globalStyles.title
         }}
       />
       <MyLabel
         text="Select your Card's closing date:"
         styles={{
-          container: styles.subtitleContainer, text: styles.subtitle
+          container: [globalStyles.titleContainer],
+          text: globalStyles.subtitle
         }}
       />
       <View style={styles.pickerContainer}>
         <DateTimePicker
-        style={styles.picker}
-        value={date}
-        minimumDate={formatMinimumDate()}
-        maximumDate={formatNextMonth()}
-        onChange={onChange}
+          style={styles.picker}
+          value={date}
+          minimumDate={formatMinimumDate()}
+          maximumDate={formatNextMonth()}
+          onChange={onChange}
         />
       </View>
       <MyButton
-        content="Set closing date!"
+        content={
+          <MyLabel
+            Icon={
+              <Octicons
+                name="chevron-right"
+                size={subtitleFontLarge}
+                color="white"
+                style={{ marginLeft: '5%' }}
+              />
+            }
+            text="Set closing date"
+            styles={{
+              text: globalStyles.buttonLabel,
+              container: globalStyles.label
+            }}
+          />
+        }
         onPress={onSubmit({ closingDate: date })}
         styles={{
-          container: styles.button,
-          text: styles.buttonContent
+          container: [globalStyles.button, styles.button],
+          text: globalStyles.buttonLabel
         }}
+        highlightColor={
+          colorVariant2
+        }
       />
-    </View>
+    </Animated.View>
   )
-}
-
-const styles = StyleSheet.create({
-  
-  container: {
-    padding: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%'
-  },
-  titleContainer: {
-    marginTop: '5%',
-    marginBottom: '5%',
-    alignItems: 'center',
-  },
-  title: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 25
-  },
-  subtitleContainer: {
-    marginBottom: '5%',
-  },
-  subtitle:{
-    fontSize: 15,
-    color: 'white',
-    fontWeight: '600'
-  },
-  pickerContainer: {
-    paddingTop: '5%',
-    paddingBottom: '5%',
-    width: '100%',
-    backgroundColor: 'white',
-    borderRadius: 10
-  },
-  picker: {
-    width: '100%'
-  },
-  button: {
-    padding: '2%',
-    marginTop: '5%',
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10
-  },
-  buttonContent: {
-    color: 'white',
-    fontSize: 20
-  }
-})
+};
 
 export default CardData;
 

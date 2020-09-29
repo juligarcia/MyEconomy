@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const MyDummyCard = ({ label, labelStyle, containerStyle, Icon, before, both }) => (
-  <View style={[styles.container, containerStyle]}>
-    {(before || both) && Icon}
-    <Text style={labelStyle}>{label}</Text>
-    {(!before || both) && Icon}
-  </View>
-);
+class MyDummyCard extends PureComponent {
+  render(){
+    const { label, labelStyle, containerStyle, Icon, before, both } = this.props;
+    return(
+      <View style={[styles.container, containerStyle]}>
+        {(before || both) && Icon}
+        <Text style={labelStyle}>{label}</Text>
+        {(!before || both) && Icon}
+      </View>
+    )
+  }
+};
 
 const styles = StyleSheet.create({
   container: {

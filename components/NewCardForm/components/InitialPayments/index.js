@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { FlatList, View, TouchableHighlight, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { FlatList, StyleSheet, Animated } from 'react-native';
 import MyDummyCard from '../../../MyDummyCard';
 import { AntDesign } from '@expo/vector-icons'; 
 import MyButton from '../../../MyButton';
 import MyModal from '../../../MyModal';
+import MyLabel from '../../../MyLabel';
 import NewPayment from '../../../NewPayment';
+import { colorLuminance, isDark } from '../../../../aux/functions';
+import { screenWidth, subtitleFontLarge, titleFontLarge } from '../../../../aux/dimensions';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { globalStyles } from '../../../../aux/globalStyles';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { Octicons } from '@expo/vector-icons';
 
-const InitialPayments = ({ addCardData, nextStep }) => {
+const InitialPayments = ({ card, addCardData, nextStep }) => {
 
   const [payments, updatePayments] = useState([]);
   const [paymentId, updateId] = useState(0);
@@ -16,9 +23,26 @@ const InitialPayments = ({ addCardData, nextStep }) => {
     updatePayments(prevState => [...prevState, payment]);
   };
 
+  const animatedX = useRef(new Animated.Value(screenWidth)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedX, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false
+    }).start();
+  }, []);
+
   const onSubmit = payments => () => {
-    addCardData(payments);
-    nextStep();
+    Animated.timing(animatedX, {
+      toValue: -screenWidth,
+      duration: 300,
+      useNativeDriver: false
+    }).start(() => {
+      addCardData(payments);
+      addCardData({ nextPaymentId: paymentId });
+      nextStep();
+    });
   };
 
   const renderPayment = ({ item }) => {
@@ -30,14 +54,47 @@ const InitialPayments = ({ addCardData, nextStep }) => {
             `in ${instalments} instalments`
           ) : (
             ''
-          ) || monthly ? ', Monthly payments' : ''}`}
-        labelStyle={styles.dummy}
+          ) || monthly ? ', Monthly' : ''}`}
+        labelStyle={[globalStyles.subtitle, styles.dummy]}
       />
     );
   };
 
+  const colorVariant1 = card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1);
+  const colorVariant2 = colorVariant1 && colorLuminance(colorVariant1, isDark(colorVariant1) ? 0.5 : -0.3);
+
+
+  const styles = StyleSheet.create({
+    container: {
+      paddingTop: getStatusBarHeight()
+    },
+    icon: {
+      padding: '3.5%'
+    },
+    list: {
+      width: '90%',
+      padding: '2%',
+      borderRadius: 10,
+      backgroundColor: colorVariant1
+    },
+    dummy: {
+      color: 'gray' 
+    },
+    addPaymentContainer: {
+      backgroundColor: '#0E78C2'
+    },
+    listItem: {
+      height: '30%'
+    },
+    button: {
+      marginBottom: '20%',
+      backgroundColor: colorVariant1
+    }
+  });
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[globalStyles.container, styles.container, { left: animatedX }]}>
+      <FontAwesome5 name="money-check" size={titleFontLarge} color="white" style={styles.icon} />
       <MyModal
         openModal={openAddPayment}
         content={
@@ -48,7 +105,7 @@ const InitialPayments = ({ addCardData, nextStep }) => {
             incId={() => updateId(prevState => prevState + 1)}
           />
         }
-        containerStyle={styles.addPaymentContainer}
+        containerStyle={[globalStyles.container, styles.addPaymentContainer]}
         position="flex-start"
       />
       <FlatList
@@ -57,14 +114,16 @@ const InitialPayments = ({ addCardData, nextStep }) => {
         ListHeaderComponent={
           <MyDummyCard
             label="Initial Payments"
-            containerStyle={styles.dummyContainer}
-            labelStyle={styles.dummy}
+            labelStyle={[globalStyles.subtitle, styles.dummy]}
             Icon={
               <MyButton
                 content={
-                  <AntDesign name="plussquare" size={20} color="gray" />
+                  <AntDesign name="plussquare" size={subtitleFontLarge} color="gray" />
                 }
                 onPress={() => setOpen(true)}
+                highlightColor={
+                  card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1)
+                }
               />
             }
           />
@@ -73,62 +132,34 @@ const InitialPayments = ({ addCardData, nextStep }) => {
         renderItem={renderPayment}
       />
       <MyButton
-        content="Add payments!"
+        content={
+          <MyLabel
+            Icon={
+              <Octicons
+                name="chevron-right"
+                size={subtitleFontLarge}
+                color="white"
+                style={{ marginLeft: '5%' }}
+              />
+            }
+            text="Create Card"
+            styles={{
+              text: globalStyles.buttonLabel,
+              container: globalStyles.label
+            }}
+          />
+        }
         onPress={onSubmit({ payments })}
         styles={{
-          container: styles.button,
-          text: styles.buttonContent
+          container: [globalStyles.button, styles.button],
+          text: globalStyles.buttonLabel
         }}
+        highlightColor={
+          colorVariant2 
+        }
       />
-    </View>
+    </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  list: {
-    width: '90%',
-    height: '100%',
-    marginTop: '5%',
-  },
-  title: {
-    color: 'white',
-    fontSize: 20
-  },
-  titleContainer: {
-    marginBottom: '5%',
-    marginTop: '5%'
-  },
-  dummy: {
-    color: 'gray' 
-  },
-  addPaymentContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    width: '100%',
-    backgroundColor: 'dodgerblue',
-    borderRadius: 10
-  },
-  listItem: {
-    height: '30%'
-  },
-  button: {
-    padding: '2%',
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: 'white',
-    marginBottom: '5%'
-  },
-  buttonContent: {
-    color: 'white',
-    fontSize: 20
-  }
-});
 
 export default InitialPayments;

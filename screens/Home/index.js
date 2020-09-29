@@ -11,7 +11,7 @@ const Home = ({ dispatch }) => {
   const [id, setId] = useState(0);
 
   const incId = () => {
-    setId(id + 1);
+    setId(prev => prev + 1);
   };
 
   const open = () => {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
   }
 })
 

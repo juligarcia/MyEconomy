@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import Steps from './steps';
+import StepCounter from '../StepCounter';
+import MyButton from '../MyButton';
+import { AntDesign } from '@expo/vector-icons'; 
+import { scaleSize } from '../../aux/dimensions';
 
 const NewPayment = ({ addPayment, onClose, incId, nextId }) => {
 
   const [stepNumber, setStep] = useState(0);
   const [payment, updatePayment] = useState({});
+  const [done, setDone] = useState(false);
 
   const addCreatedPayment = () => {
     addPayment(payment);
@@ -13,28 +18,61 @@ const NewPayment = ({ addPayment, onClose, incId, nextId }) => {
     onClose();
   };
 
+  const isLastStep = Steps.length - 1 === stepNumber;
+
   const nextStep = () => {
-    setStep(prevState => prevState + 1);
+    if(isLastStep) setDone(true);
+    else setStep(prevState => prevState + 1);
   };
 
   const Step = Steps[stepNumber];
-  const isLastStep = Steps.length - 1 === stepNumber;
 
   const addPaymentData = data => {
     updatePayment(prevState => Object.assign({}, prevState, data, { key: nextId }));
   };
 
+  useEffect(() => {
+    if (done) addCreatedPayment();
+  }, [done])
+
   return(
-    <View style={styles.container}>
-      <Step addPaymentData={addPaymentData} nextStep={isLastStep ? addCreatedPayment : nextStep} />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <MyButton
+        onPress={onClose}
+        styles={{
+          container: styles.button
+        }}
+        content={
+          <AntDesign
+            style={styles.icon}
+            name="close"
+            size={scaleSize(7)}
+            color="white"
+          />
+        }
+        highlightColor="#258FD9"
+      />
+      <Step addPaymentData={addPaymentData} nextStep={nextStep} />
+      <StepCounter containerStyle={styles.stepCounter} step={stepNumber} totalSteps={Steps.length} />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  conatiner: {
-    width: '100%',
-    height: '100%'
+  container: {
+    width: '100%'
+  },
+  button: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: '15%',
+    marginLeft: '5%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10
+  },
+  stepCounter: {
+    bottom: '20%'
   }
 })
 
