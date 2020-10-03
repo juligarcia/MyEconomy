@@ -5,7 +5,6 @@ import MyLabel from '../../../MyLabel';
 import { colorLuminance, isDark } from '../../../../aux/functions';
 
 const MyCardBar = ({ cardName, closingDate, color }) => {
-
   const formatDate = date => (
     `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
   );
@@ -26,8 +25,8 @@ const MyCardBar = ({ cardName, closingDate, color }) => {
 
   return (
     <View style={styles.container}>
-      <MyLabel text={cardName} styles={{ text: styles.text }} />
-      <MyLabel text={`Closing date: ${formatDate(closingDate)}`} styles={{ text: styles.text }} />
+      <MyLabel text={cardName || ''} styles={{ text: styles.text }} />
+      <MyLabel text={closingDate ? `Closing date: ${formatDate(closingDate)}` : ''} styles={{ text: styles.text }} />
     </View>
   )
 };

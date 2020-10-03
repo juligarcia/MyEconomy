@@ -5,9 +5,11 @@ import * as cardActions from '../../redux/cards/actions';
 import Steps from './steps';
 import StepCounter from '../StepCounter';
 import MyButton from '../MyButton';
+import MyCard from '../MyCard';
 import { AntDesign } from '@expo/vector-icons'; 
 import { scaleSize } from '../../aux/dimensions';
 import { colorLuminance, isDark } from '../../aux/functions';
+import { AnimatedBackgroundView } from '../../aux/animations';
 
 const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
 
@@ -41,7 +43,6 @@ const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: card.color || '#D7D7D7',
       height: '100%',
       width: '100%',
       borderRadius: 10
@@ -61,7 +62,10 @@ const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
   });
 
   return(
-    <View style={styles.container}>
+    <AnimatedBackgroundView
+      containerStyle={styles.container}
+      actualColor={card.color}
+    >
       <MyButton
         onPress={onClose}
         styles={{
@@ -82,8 +86,9 @@ const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
         step={stepNumber}
         totalSteps={Steps.length}
         color={card.color && colorLuminance(card.color, isDark(card.color) ? 1 : -0.3)}
-        containerStyle={styles.stepCounter} />
-    </View>
+        containerStyle={styles.stepCounter}
+      />
+    </AnimatedBackgroundView>
   );
 };
 

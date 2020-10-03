@@ -42,7 +42,7 @@ const MyCardSummary = ({ payments, color }) => {
       />
       <MyLabel
         text={
-          `Card total: ${formatter.format(payments?.reduce(getTotal, 0))}`
+          `Card total: ${formatter.format(payments ? payments.reduce(getTotal, 0) : 0)}`
         }
         styles={labelStyles}
       />

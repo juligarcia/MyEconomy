@@ -16,7 +16,7 @@ export const colorLuminance = (hex, lum = 0) => {
 	return rgb;
 };
 
-export const isDark = (hex) => {
+const getRGB = hex => {
 
   const color = parseInt('0x' + hex.slice(1));
 
@@ -24,10 +24,14 @@ export const isDark = (hex) => {
   const GG = (color & (0xFF << 8)) >> 8;
   const BB = color & 0xFF;
 
+  return { RR, GG, BB };
+
+};
+
+export const isDark = (hex) => {
+  const { RR, GG, BB } = getRGB(hex);
   const average = (RR + GG + BB) / 3;
-
   return 255 - average > average;
-
 };
 
 export const formatter = new Intl.NumberFormat(
@@ -37,3 +41,8 @@ export const formatter = new Intl.NumberFormat(
     currency: 'USD',
     minimumFractionDigits: 2
 });
+
+export const hex2rgb = hex => {
+  const { RR, GG, BB } = getRGB(hex);
+  return `rgb(${RR},${GG},${BB})`;
+}

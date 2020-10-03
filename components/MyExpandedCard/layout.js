@@ -1,12 +1,14 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MyCardBar from '../MyCard/components/MyCardBar';
 import MyButton from '../MyButton';
 import MyFullSummary from './components/MyFullSummary';
 import { scaleSize } from '../../aux/dimensions';
+import { Slide } from '../../aux/animations';
 
 const MyExpandedCard = ({ card, unExpand }) => {
   const { cardName, closingDate, color, payments } = card;
+  const [dismount, setDismount] = useState(false);
   return (
     <View style={styles.container}>
       <MyCardBar
@@ -14,10 +16,18 @@ const MyExpandedCard = ({ card, unExpand }) => {
         closingDate={closingDate}
         color={color}
       />
-      <MyFullSummary card={card} />
+      <Slide
+        duration={300}
+        onDismountCallback={unExpand}
+        dismount={dismount}
+      >
+        <MyFullSummary card={card} />
+      </Slide>
       <MyButton
         content="Close"
-        onPress={unExpand}
+        onPress={() => {
+          setDismount(true);
+        }}
         styles={{
           text: styles.buttonText
         }}

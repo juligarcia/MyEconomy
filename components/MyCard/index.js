@@ -1,5 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, useWindowDimensions, View, ScrollView, TouchableWithoutFeedback, Animated } from 'react-native';
+import {
+  StyleSheet,
+  useWindowDimensions,
+  View,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Animated
+} from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import MyCardBar from './components/MyCardBar';
@@ -8,7 +15,7 @@ import MyDummyCard from '../MyDummyCard';
 import { scaleSize } from '../../aux/dimensions';
 import { globalStyles } from '../../aux/globalStyles';
 
-const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment }) => {
+const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {}, addPayment, dummy = false }) => {
 
   const [cardRef, setCardRef] = useState(null);
 
@@ -29,13 +36,21 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment
       marginRight: scaleSize(5),
       marginLeft: scaleSize(5),
       backgroundColor: color,
-      width: scaleSize(90)
+      width: scaleSize(90),
+      height: scaleSize(40)
+    },
+    scrollView: {
+      height: scaleSize(40)
     },
     smallContainer: {
       marginBottom: scaleSize(3),
       marginTop: scaleSize(3),
       borderRadius: 10,
       width: scaleSize(30)
+    },
+    dummy: {
+      borderColor:'white',
+      borderWidth: scaleSize(0.5)
     },
     center: {
       justifyContent: 'center',
@@ -63,6 +78,7 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment
 
   return (
     <ScrollView
+      style={dummy && styles.scrollView}
       snapToInterval={width * 0.3}
       showsHorizontalScrollIndicator={false}
       decelerationRate="fast"
@@ -74,7 +90,7 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment
       }}
     >
     {[
-      <TouchableWithoutFeedback
+      !dummy && <TouchableWithoutFeedback
         key={0}
       >
         <MyDummyCard
@@ -87,7 +103,7 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment
         onPress={expandCard}
         key={2}
       >
-        <View ref={setCardRef} key={3} style={[globalStyles.centered, styles.container]}>
+        <View ref={setCardRef} key={3} style={[globalStyles.centered, styles.container, dummy && styles.dummy]}>
           <MyCardBar
             key={4}
             cardName={cardName}
@@ -101,7 +117,7 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard, addPayment
           />
         </View>
       </TouchableWithoutFeedback>,
-      <TouchableWithoutFeedback
+      !dummy && <TouchableWithoutFeedback
         onPress={onPressAnimation(addPayment)}
         key={6}
       >

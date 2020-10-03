@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import MyDummyCard from '../MyDummyCard';
 import MyCard from '../MyCard';
 import MyExpandedCard from '../MyExpandedCard';
+import MyActionBar from './components/MyActionBar';
 import { scaleSize } from '../../aux/dimensions';
 import { globalStyles } from '../../aux/globalStyles';
 import MyModal from '../MyModal';
@@ -20,8 +21,6 @@ const MyCards = ({ myCards, addCard, addingCard, dispatch }) => {
   const [newPayment, setNewPayment] = useState(-1);
   const openNewPayment = key => () => setNewPayment(key);
   const nextId = myCards.find(card => card.key === newPayment)?.nextPaymentId;
-
-  const AddIcon = <Feather name="chevrons-down" size={scaleSize(5)} color="#a6a6a6" />;
 
   const configureCard = ({ item, index, separators }) => {
     const { cardName, color, key, closingDate, payments } = item;
@@ -63,20 +62,12 @@ const MyCards = ({ myCards, addCard, addingCard, dispatch }) => {
         position="flex-start"
       />
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={addingCard} onRefresh={addCard} />
-        }
         style={styles.list}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <MyDummyCard
-            label="Swipe Down to Create a New Card!"
-            labelStyle={styles.addLabel}
-            Icon={AddIcon}
-            both
-            containerStyle={styles.addConatiner}
-          />
+          <MyActionBar create={addCard} />
         }
+        ListHeaderComponentStyle={{ width: '90%', marginLeft: '5%', marginRight: '5%' }}
         data={myCards}
         renderItem={configureCard}
         keyExtractor={item => item.key.toString()}

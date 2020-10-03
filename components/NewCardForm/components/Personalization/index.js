@@ -1,15 +1,15 @@
-import React, { useRef, useEffect } from 'react';
-import { StyleSheet, View, TextInput, Animated } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, TextInput } from 'react-native';
 import { Formik } from 'formik';
 import { AntDesign } from '@expo/vector-icons';
 import ColorPicker from './components/ColorPicker';
 import MyButton from '../../../MyButton';
 import MyLabel from '../../../MyLabel';
 import { colorLuminance, isDark } from '../../../../aux/functions';
-import { screenWidth, titleFont, subtitleFontLarge } from '../../../../aux/dimensions';
+import { titleFont, subtitleFontLarge, scaleSize } from '../../../../aux/dimensions';
 import { globalStyles } from '../../../../aux/globalStyles';
+import { Slide } from '../../../../aux/animations';
 import { Octicons } from '@expo/vector-icons';
-
 
 const colors = {
   red: '#EF3939',
@@ -23,30 +23,18 @@ const colors = {
 
 const Personalization = ({ addCardData, nextStep, card }) => {
 
+  const [submit, setSubmit] = useState({ dismount: false });
+
   const setColor = color => {
     addCardData({ color });
   };
 
-  const onSubmit = values => {
-    Animated.timing(animatedX, {
-      toValue: -screenWidth,
-      duration: 300,
-      useNativeDriver: false
-    }).start(() => {
-      addCardData(values);
-      nextStep();
-    });
-  };
+  const onSubmit = values => setSubmit({dismount: true, values});
 
-  const animatedX = useRef(new Animated.Value(screenWidth)).current;
-
-  useEffect(() => {
-    Animated.timing(animatedX, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: false
-    }).start();
-  }, []);
+  const onDismountCallback = () => {
+    addCardData(submit.values);
+    nextStep();
+  }
 
   const colorVariant1 = card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1);
   const colorVariant2 = colorVariant1 && colorLuminance(colorVariant1, isDark(colorVariant1) ? 0.5 : -0.3);
@@ -78,7 +66,11 @@ const Personalization = ({ addCardData, nextStep, card }) => {
   });
 
   return(
-    <Animated.View style={[globalStyles.container, styles.container, { left: animatedX }]}>
+    <Slide
+      onDismountCallback={onDismountCallback}
+      dismount={submit.dismount}
+    >
+    <View style={[globalStyles.container, styles.container]}>
         <MyLabel
           text="My New Card"
           styles={{
@@ -152,7 +144,8 @@ const Personalization = ({ addCardData, nextStep, card }) => {
           </View>
         )}
       </Formik>
-    </Animated.View>
+    </View>
+    </Slide>
   );
 };
 

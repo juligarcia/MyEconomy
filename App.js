@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Platform, SafeAreaView } from 'react-native';
+import { StyleSheet, Platform, SafeAreaView } from 'react-native';
 import { NativeRouter, Route, Switch } from "react-router-native";
 import { Provider } from 'react-redux';
 
