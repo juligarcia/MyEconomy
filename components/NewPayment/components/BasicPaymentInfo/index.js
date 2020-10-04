@@ -67,7 +67,7 @@ const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
                     }
                     text="Set alias"
                     styles={{
-                      text: [globalStyles.buttonLabel, styles.buttonLabel],
+                      text: [globalStyles.buttonLabel, styles.buttonLabel, globalStyles.buttonLabelContainer],
                       container: globalStyles.label
                     }}
                   />

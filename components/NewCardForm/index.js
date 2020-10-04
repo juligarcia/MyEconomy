@@ -3,13 +3,16 @@ import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as cardActions from '../../redux/cards/actions';
 import Steps from './steps';
+import { help } from './constants';
 import StepCounter from '../StepCounter';
 import MyButton from '../MyButton';
-import MyCard from '../MyCard';
+import MyHelp from '../MyHelp';
+import MyLabel from '../MyLabel';
 import { AntDesign } from '@expo/vector-icons'; 
 import { scaleSize } from '../../aux/dimensions';
 import { colorLuminance, isDark } from '../../aux/functions';
 import { AnimatedBackgroundView } from '../../aux/animations';
+import { globalStyles } from '../../aux/globalStyles';
 
 const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
 
@@ -58,6 +61,14 @@ const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
     },
     stepCounter: {
       bottom: '20%'
+    },
+    help: {
+      zIndex: 1,
+      top: '8%',
+      left: '90%'
+    },
+    helpContent: {
+      color: 'gray'
     }
   });
 
@@ -80,6 +91,17 @@ const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
           />
         }
         highlightColor={card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1)}
+      />
+      <MyHelp
+        buttonStyle={styles.help}
+        content={
+          <MyLabel
+            text={help[stepNumber]}
+            styles={{
+              text: [globalStyles.smallSubtitle, styles.helpContent]
+            }}
+          />
+        }
       />
       <Step card={card} addCardData={addCardData} nextStep={nextStep} />
       <StepCounter

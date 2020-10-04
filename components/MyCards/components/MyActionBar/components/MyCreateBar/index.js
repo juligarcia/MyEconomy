@@ -30,7 +30,8 @@ const MyCreateBar = ({ create }) => (
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
+    borderBottomRightRadius: 10,
+    borderTopRightRadius: 10,
     height: scaleSize(8, true),
     width: scaleSize(90),
     backgroundColor: '#84E184',

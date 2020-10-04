@@ -5,6 +5,7 @@ import {
   View,
   ScrollView,
   TouchableWithoutFeedback,
+  TouchableHighlight,
   Animated
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -25,16 +26,21 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
     }
   );
   
-  const width = useWindowDimensions().width;
-
   const styles = StyleSheet.create({
+    wrapper: {
+      borderRadius: 10,
+      width: '90%',
+        marginLeft: '5%',
+        marginRight: '5%',
+        marginTop: '2%',
+        marginBottom: '2%'
+    },
+    content: {
+      borderRadius: 10
+    },
     container: {
       padding: scaleSize(3),
-      borderRadius: 10,
-      marginBottom: scaleSize(3),
-      marginTop: scaleSize(3),
-      marginRight: scaleSize(5),
-      marginLeft: scaleSize(5),
+
       backgroundColor: color,
       width: scaleSize(90),
       height: scaleSize(40)
@@ -43,10 +49,9 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
       height: scaleSize(40)
     },
     smallContainer: {
-      marginBottom: scaleSize(3),
-      marginTop: scaleSize(3),
-      borderRadius: 10,
-      width: scaleSize(30)
+      borderRadius: 0,
+      width: scaleSize(30),
+      height: scaleSize(40)
     },
     dummy: {
       borderColor:'white',
@@ -57,10 +62,14 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
       alignItems: 'center'
     },
     delete: {
-      backgroundColor: '#DC3636'
+      backgroundColor: '#DC3636',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10
     },
     add: {
-      backgroundColor: '#0E78C2'
+      backgroundColor: '#0E78C2',
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10
     }
   });
 
@@ -77,20 +86,22 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
   }
 
   return (
+    <View style={styles.wrapper}>
     <ScrollView
-      style={dummy && styles.scrollView}
-      snapToInterval={width * 0.3}
+      contentContainerStyle={styles.content}
+      style={styles.content}
+      snapToInterval={scaleSize(30)}
       showsHorizontalScrollIndicator={false}
       decelerationRate="fast"
       horizontal
       directionalLockEnabled
       contentOffset={{
-        x: width * 0.3,
+        x: scaleSize(30),
         y: 0
       }}
     >
     {[
-      !dummy && <TouchableWithoutFeedback
+      !dummy && <TouchableHighlight
         key={0}
       >
         <MyDummyCard
@@ -98,7 +109,7 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
           containerStyle={[styles.smallContainer, styles.delete, styles.center]}
           Icon={DeleteIcon}
         />
-      </TouchableWithoutFeedback>,
+      </TouchableHighlight>,
       <TouchableWithoutFeedback
         onPress={expandCard}
         key={2}
@@ -117,21 +128,20 @@ const MyCard = ({ cardName, color, closingDate, payments, selectCard = () => {},
           />
         </View>
       </TouchableWithoutFeedback>,
-      !dummy && <TouchableWithoutFeedback
+      !dummy && <TouchableHighlight
         onPress={onPressAnimation(addPayment)}
         key={6}
       >
-        <Animated.View style={[styles.smallContainer, styles.add, styles.center, { scale: animatedScale }]}>
-          <MyDummyCard
-            key={7}
-            containerStyle={[styles.add, styles.center]}
-            Icon={AddIcon}
-            before
-          />
-        </Animated.View>
-      </TouchableWithoutFeedback>
+        <MyDummyCard
+          key={7}
+          containerStyle={[styles.smallContainer, styles.add, styles.center]}
+          Icon={AddIcon}
+          before
+        />
+      </TouchableHighlight>
     ]}
     </ScrollView>
+    </View>
   )
 };
 

@@ -17,14 +17,18 @@ const MyLROptions = ({ left, right, style, color }) => {
       width: '100%'
     },
     optionR: {
-      marginRight: '2%'
+      marginRight: '5%'
     },
     optionL: {
-      marginLeft: '2%'
+      marginLeft: '5%'
     },
     label: {
       color: 'gray',
       fontSize: smallSubtitleFont
+    },
+    swipe: {
+      marginLeft: right && !left ? '3%' : 0,
+      marginRight: left && !right ? '3%' : 0
     }
   });
 
@@ -41,8 +45,8 @@ const MyLROptions = ({ left, right, style, color }) => {
       />}
       <MyLabel
         styles={{
-          container: globalStyles.label,
-          text: [globalStyles.smallSubtitle, styles.label, styles.optionR]
+          container: [globalStyles.label, styles.swipe],
+          text: [globalStyles.smallSubtitle, styles.label]
         }}
         text="Swipe"
       />

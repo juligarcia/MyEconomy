@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  useWindowDimensions,
-  View,
-  VirtualizedList,
-  TouchableWithoutFeedback,
-  Animated
-} from 'react-native';
-import { scaleSize } from '../../../../aux/dimensions';
+import { View, VirtualizedList, StyleSheet } from 'react-native';
 import MySearchBar from './components/MySearchBar';
 import MyCreateBar from './components/MyCreateBar';
 import MyQuickActionsBar from './components/MyQuickActionsBar';
@@ -18,21 +10,18 @@ const MyActionBar = ({ create }) => {
   const actions = [
     {
       Component: MyQuickActionsBar,
-      key: 0,
-      label: 'Settings' 
+      key: 0
     },
     {
       Component: MySearchBar,
-      key: 1,
-      label: 'Search payment'
+      key: 1
     },
     {
       Component: MyCreateBar,
       props: {
         create
       },
-      key: 2,
-      label: 'Create Card'
+      key: 2
     }
   ];
   const renderAction = ({ item, index, separators }) => {
@@ -42,7 +31,7 @@ const MyActionBar = ({ create }) => {
     );
   };
   const onViewableItemsChanged = ({ viewableItems }) => {
-    const optionLabels = ['Settings', 'Search payment', 'Create Card'];
+    const optionLabels = ['Settings', 'Search', 'Create Card'];
     if(viewableItems.length){
       const index = viewableItems[0].index;
       const left = index - 1 < 0 ? undefined : index - 1;
@@ -57,6 +46,7 @@ const MyActionBar = ({ create }) => {
   return (
     <View>
       <VirtualizedList
+        style={styles.container}
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         decelerationRate="fast"
@@ -67,7 +57,7 @@ const MyActionBar = ({ create }) => {
         renderItem={renderAction}
         keyExtractor={item => item.key.toString()}
         getItem={(data, index) => data[index]}
-        getItemCount={data => data.length}
+        getItemCount={data => data?.length}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
           viewAreaCoveragePercentThreshold: 90
@@ -84,5 +74,11 @@ const MyActionBar = ({ create }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 10
+  }
+});
 
 export default MyActionBar;

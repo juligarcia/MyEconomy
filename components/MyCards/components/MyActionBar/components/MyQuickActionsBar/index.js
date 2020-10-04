@@ -14,7 +14,7 @@ import { scaleSize, subtitleFontLarge, titleFontLarge } from '../../../../../../
 import { globalStyles } from '../../../../../../aux/globalStyles';
 import { Ionicons } from '@expo/vector-icons'; 
 
-const MyQuickActionsBar = ({ toggleMode, mode='dark'}) => {
+const MyQuickActionsBar = ({ toggleMode, mode='light'}) => {
   const iconName = mode === 'dark' ? 'ios-moon' : 'ios-sunny';
   const iconColor = mode === 'dark' ? '#2E2EB8' : '#FFD11A';
   return (
@@ -33,7 +33,8 @@ const MyQuickActionsBar = ({ toggleMode, mode='dark'}) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
     height: scaleSize(8, true),
     width: scaleSize(90),
     backgroundColor: '#9FBEDF',

@@ -145,7 +145,7 @@ const InitialPayments = ({ card, addCardData, nextStep }) => {
             text="Create Card"
             styles={{
               text: globalStyles.buttonLabel,
-              container: globalStyles.label
+              container: [globalStyles.label, globalStyles.buttonLabelContainer]
             }}
           />
         }

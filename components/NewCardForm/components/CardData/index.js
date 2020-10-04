@@ -119,7 +119,7 @@ const CardData = ({ card, addCardData, nextStep }) => {
         }
         onPress={onSubmit({ closingDate: date })}
         styles={{
-          container: [globalStyles.button, styles.button],
+          container: [globalStyles.button, styles.button, globalStyles.buttonLabelContainer],
           text: globalStyles.buttonLabel
         }}
         highlightColor={

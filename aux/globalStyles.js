@@ -47,7 +47,6 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '3%',
     margin: '3%'
   },
   buttonLabel: {
@@ -59,6 +58,9 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  buttonLabelContainer: {
+    padding: '3%'
   },
   centered: {
     justifyContent: 'center',

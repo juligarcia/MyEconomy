@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, TouchableHighlight } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { scaleSize } from '../../../../../../../../aux/dimensions';
 

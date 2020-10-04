@@ -124,7 +124,7 @@ const TotalAndInstalments = ({ addPaymentData, nextStep }) => {
                     text="Add"
                     styles={{
                       text: globalStyles.buttonLabel,
-                      container: globalStyles.label
+                      container: [globalStyles.label, globalStyles.buttonLabelContainer]
                     }}
                   />
                 }
