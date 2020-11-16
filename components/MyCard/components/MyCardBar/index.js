@@ -2,23 +2,33 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import MyLabel from '../../../MyLabel';
-import { colorLuminance, isDark } from '../../../../aux/functions';
+import { colorLuminance, getLuminance } from '../../../../aux/functions';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
 const MyCardBar = ({ cardName, closingDate, color }) => {
-  const formatDate = date => (
+  const format = date => (
     `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
   );
+  
+  const { isDark } = useTheme();
+
+  const formatDate = date => {
+    if(typeof date === 'object')  
+      return format(date);
+    return format(new Date(date));
+  };
   const styles = StyleSheet.create({
     container: {
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: colorLuminance(color, isDark(color) ? 0.5 : -0.1),
+      backgroundColor: getLuminance(color, isDark),
+      //backgroundColor: colorLuminance(color, isDark(color) ? 0.5 : -0.1),
       padding: '2%',
       borderRadius: 10
     },
     text: {
-      color: "#fff",
+      color: 'white',
       fontWeight: '700'
     }
   });

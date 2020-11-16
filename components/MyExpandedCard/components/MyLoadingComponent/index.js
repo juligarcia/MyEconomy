@@ -3,27 +3,29 @@ import { View, Dimensions, Animated } from 'react-native';
 import MyCardBar from '../../../MyCard/components/MyCardBar';
 import MyCardSummary from '../../../MyCard/components/MyCardSummary';
 import { Slide } from '../../../../aux/animations';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
 const MyLoadingComponent = ({ card, isMounting }) => {
+  const { colors } = useTheme();
+  const cardColor = colors.cardColors[card.color];
   return (
     <View>
       <MyCardBar
         cardName={card.cardName}
         closingDate={card.closingDate}
-        color={card.color}
+        color={cardColor}
       />
       <Slide
-        duration={300}
+        duration={700}
         dismount
         onlyDismount={isMounting}
         onlyMount={!isMounting}
+        easing="cubic"
       >
-        <View>
-          <MyCardSummary
-            payments={card.payments}
-            color={card.color}
-          />
-        </View>
+        <MyCardSummary
+          payments={card.payments}
+          color={cardColor}
+        />
       </Slide>
     </View>
 )};

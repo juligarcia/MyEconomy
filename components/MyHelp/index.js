@@ -1,66 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import MyModal from '../MyModal';
 import MyButton from '../MyButton';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { scaleSize, smallSubtitleFont } from '../../aux/dimensions'
+import { scaleSize, smallSubtitleFont } from '../../aux/dimensions';
+import { globalStyles } from '../../aux/globalStyles';
 
-const MyHelp = ({ content, buttonStyle, anchor }) => {
+const MyHelp = ({ content, buttonStyle, anchor, spaceBetween = 3.5 }) => {
   const [openHelp, setOpenHelp] = useState(false);
   const [anchorData, setAnchorData] = useState({ width: 0, height: 0, px: 0, py: 0 });
   const [self, setSelf] = useState(null);
-  
-  const determineArrowPosition = () => 
-    anchorData.py >= scaleSize(50, true)
-    ? 'bottom'
-    : 'top'
+  const [modalHeight, setModalHeight] = useState(undefined);
+
+  const determineArrowPosition = () => (anchorData.py >= scaleSize(50, true) ? 'bottom' : 'top');
 
   useEffect(() => {
-    if(anchor && openHelp)
-      anchor.measure(
-        (fx, fy, width, height, px, py) => {
-          setAnchorData({ width, height, px, py });
-        }
-      );
-    else if(self && openHelp)
-      self.measure(
-        (fx, fy, width, height, px, py) => {
-          setAnchorData({ width, height, px, py });
-        }
-      );
+    if (anchor && openHelp)
+      anchor.measure((fx, fy, width, height, px, py) => {
+        setAnchorData({ width, height, px, py });
+      });
+    else if (self && openHelp)
+      self.measure((fx, fy, width, height, px, py) => {
+        setAnchorData({ width, height, px, py });
+      });
   }, [openHelp]);
 
-  const posY = anchorData.py + anchorData.height + scaleSize(3.5, true);
-  const posX = anchor ? anchorData.px + anchorData.width / 2 : anchorData.px;
+  const posY = anchorData.py + anchorData.height + scaleSize(spaceBetween, true);
+  const posX = anchorData.px + anchorData.width / 2;
 
   const styles = StyleSheet.create({
-    container: {
-      position: 'absolute'
-    },
     modal: {
       borderRadius: 10,
       padding: '2%',
-      backgroundColor: '#e6e6e6',
-      width: '90%',
+      backgroundColor: '#E6E6E6',
+      width: '97%',
       top: posY,
-      marginLeft: '5%',
-      marginRight: '5%',
+      marginLeft: '1.5%',
+      marginRight: '1.5%',
       shadowColor: 'black',
       shadowOffset: { width: 0, height: scaleSize(1) },
-      shadowOpacity: 0.5
+      shadowOpacity: 0.5,
     },
     arrow: {
-      position: 'absolute'
-    }
+      position: 'absolute',
+    },
+    button: {
+      height: smallSubtitleFont + scaleSize(2.5),
+      width: smallSubtitleFont + scaleSize(2.5),
+    },
   });
 
+  const arrowPlacement = determineArrowPosition();
+  const upRight = arrowPlacement === 'top';
+
   return (
-    <View ref={setSelf} style={buttonStyle}>
+    <View style={buttonStyle}>
       <MyModal
-        arrowPlacement={determineArrowPosition()}
+        withBlur
+        setModalHeight={setModalHeight}
+        arrowPlacement={arrowPlacement}
         arrowDisplacement={{
           x: posX,
-          y: posY - scaleSize(2)
+          y: upRight ? posY : posY + modalHeight,
         }}
         withArrow
         openModal={openHelp}
@@ -70,13 +72,12 @@ const MyHelp = ({ content, buttonStyle, anchor }) => {
         onClose={() => setOpenHelp(false)}
       />
       <MyButton
-        styles={{
-          container: styles.container
-        }}
         onPress={() => setOpenHelp(true)}
-        content={
-          <MaterialCommunityIcons size={smallSubtitleFont} name="checkbox-blank-circle" color="#00ff00" />
-        }
+        content={(
+          <View ref={setSelf} style={[globalStyles.centered, styles.button]}>
+            <MaterialCommunityIcons size={smallSubtitleFont} name="checkbox-blank-circle" color="#00FF00" />
+          </View>
+        )}
       />
     </View>
   );

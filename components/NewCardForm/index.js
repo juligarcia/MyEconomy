@@ -1,118 +1,103 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
+
 import * as cardActions from '../../redux/cards/actions';
-import Steps from './steps';
-import { help } from './constants';
 import StepCounter from '../StepCounter';
-import MyButton from '../MyButton';
 import MyHelp from '../MyHelp';
 import MyLabel from '../MyLabel';
-import { AntDesign } from '@expo/vector-icons'; 
 import { scaleSize } from '../../aux/dimensions';
 import { colorLuminance, isDark } from '../../aux/functions';
 import { AnimatedBackgroundView } from '../../aux/animations';
 import { globalStyles } from '../../aux/globalStyles';
+import { useTheme } from '../../theme/ThemeProvider';
+
+import { help } from './constants';
+import Steps from './steps';
 
 const NewCardForm = ({ dispatch, onClose, incId, nextId }) => {
-
   const [stepNumber, setStep] = useState(0);
   const [card, updateCard] = useState({});
   const [done, setDone] = useState(false);
-
   const isLastStep = Steps.length - 1 === stepNumber;
+  const { colors } = useTheme();
+  const cardColor = colors.cardColors[card.color];
 
   const nextStep = () => {
     if (isLastStep) setDone(true);
-    else setStep(prevState => prevState + 1);
+    else setStep((prevState) => prevState + 1);
   };
 
   const Step = Steps[stepNumber];
 
-  const addCardData = data => {
-    updateCard(prevState => Object.assign({}, prevState, data));
+  const addCardData = (data) => {
+    updateCard((prevState) => ({ ...prevState, ...data }));
   };
 
   const createCard = () => {
-    dispatch(cardActions.addCard(Object.assign({}, card, { key: nextId })));
+    dispatch(cardActions.addCard({ ...card, key: nextId }));
     incId();
     onClose();
   };
 
   useEffect(() => {
-    if(done)
-      createCard();
-  }, [done])
+    if (done) createCard();
+  }, [done]);
 
-  const styles = StyleSheet.create({
-    container: {
-      height: '100%',
-      width: '100%',
-      borderRadius: 10
-    },
-    button: {
-      position: 'absolute',
-      zIndex: 1,
-      marginTop: '10%',
-      marginLeft: '5%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10
-    },
-    stepCounter: {
-      bottom: '20%'
-    },
-    help: {
-      zIndex: 1,
-      top: '8%',
-      left: '90%'
-    },
-    helpContent: {
-      color: 'gray'
-    }
-  });
-
-  return(
-    <AnimatedBackgroundView
-      containerStyle={styles.container}
-      actualColor={card.color}
-    >
-      <MyButton
-        onPress={onClose}
-        styles={{
-          container: styles.button
-        }}
-        content={
-          <AntDesign
-            style={styles.icon}
-            name="close"
-            size={scaleSize(7)}
-            color="white"
-          />
-        }
-        highlightColor={card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1)}
-      />
+  return (
+    <View style={{ justifyContent: 'flex-end', height: scaleSize(90, true) }}>
       <MyHelp
+        spaceBetween={1}
         buttonStyle={styles.help}
-        content={
+        content={(
           <MyLabel
             text={help[stepNumber]}
             styles={{
-              text: [globalStyles.smallSubtitle, styles.helpContent]
+              text: [globalStyles.smallSubtitle, styles.helpContent],
             }}
           />
-        }
+        )}
       />
-      <Step card={card} addCardData={addCardData} nextStep={nextStep} />
-      <StepCounter
-        step={stepNumber}
-        totalSteps={Steps.length}
-        color={card.color && colorLuminance(card.color, isDark(card.color) ? 1 : -0.3)}
-        containerStyle={styles.stepCounter}
-      />
-    </AnimatedBackgroundView>
+      <AnimatedBackgroundView initialColor={colors.foreground2} style={styles.container} actualColor={cardColor}>
+        <Step card={card} addCardData={addCardData} nextStep={nextStep} />
+        <StepCounter
+          step={stepNumber}
+          totalSteps={Steps.length}
+          color={cardColor && colorLuminance(cardColor, isDark(cardColor) ? 1 : -0.3)}
+          containerStyle={styles.stepCounter}
+        />
+      </AnimatedBackgroundView>
+    </View>
   );
 };
 
-export default connect()(NewCardForm);
+const styles = StyleSheet.create({
+  container: {
+    height: scaleSize(90, true),
+    width: '100%',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    justifyContent: 'center',
+  },
+  button: {
+    marginLeft: scaleSize(5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+  },
+  stepCounter: {
+    position: 'absolute',
+    bottom: 0,
+  },
+  help: {
+    marginRight: scaleSize(5),
+    zIndex: 1,
+    top: scaleSize(4, true),
+    left: scaleSize(3),
+  },
+  helpContent: {
+    color: 'gray',
+  },
+});
 
+export default connect()(NewCardForm);

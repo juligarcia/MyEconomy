@@ -1,13 +1,20 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TextInput, StyleSheet, SafeAreaView, Animated } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Animated, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';
 import MyButton from '../../../MyButton';
 import MyLabel from '../../../MyLabel';
+import MyTextInput from '../../../MyTextInput';
 import { screenWidth, subtitleFontLarge } from '../../../../aux/dimensions';
+import { useKeyboardAwareness } from '../../../../aux/hooks';
 import { globalStyles } from '../../../../aux/globalStyles';
 import { Octicons } from '@expo/vector-icons';
 
 const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
+  const { 
+    bottom,
+    handleKeyboardWillHide, 
+    handleKeyboardWillShow
+  } = useKeyboardAwareness();
 
   const animatedX = useRef(new Animated.Value(screenWidth)).current;
 
@@ -35,69 +42,68 @@ const BasicPaymentInfo = ({ addPaymentData, nextStep }) => {
   }, []);
 
   return (
-    <Animated.View style={[globalStyles.container, { left: animatedX }]}>
-      <SafeAreaView style={globalStyles.container}>
-        <Formik
-          initialValues={{
-            paymentAlias: ''
-          }}
-          onSubmit={onSubmit}
-        >
-          {(formikProps) => (
-            <View>
-              <TextInput
-                style={[globalStyles.textInput, styles.textInput]}
-                placeholderTextColor="#D7D7D7"
-                textAlign="center"
-                selectionColor="white"
-                placeholder="Payment Alias"
-                onChangeText={formikProps.handleChange('paymentAlias')}
-                value={formikProps.values.paymentAlias}
-              />
-              <MyButton
-                content={
-                  <MyLabel
-                    Icon={
-                      <Octicons
-                        name="chevron-right"
-                        size={subtitleFontLarge}
-                        color="white"
-                        style={{ marginLeft: '5%' }}
+      <Animated.View style={[globalStyles.container, { left: animatedX, bottom }]}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <SafeAreaView style={globalStyles.container}>
+            <Formik
+              initialValues={{
+                paymentAlias: ''
+              }}
+              onSubmit={onSubmit}
+            >
+              {(formikProps) => (
+                <View style={globalStyles.container}>
+                  <MyTextInput
+                    handleKeyboardWillHide={handleKeyboardWillHide}
+                    handleKeyboardWillShow={handleKeyboardWillShow}
+                    style={styles.textInput}
+                    placeholderTextColor="#D7D7D7"
+                    placeholder="Payment Alias"
+                    onChangeText={formikProps.handleChange('paymentAlias')}
+                    value={formikProps.values.paymentAlias}
+                  />
+                  <MyButton
+                    content={
+                      <MyLabel
+                        Icon={
+                          <Octicons
+                            name="chevron-right"
+                            size={subtitleFontLarge}
+                            color="white"
+                            style={{ marginLeft: '5%' }}
+                          />
+                        }
+                        text="Set Alias"
+                        styles={{
+                          text: globalStyles.buttonLabel,
+                          container: [globalStyles.label, globalStyles.buttonLabelContainer]
+                        }}
                       />
                     }
-                    text="Set alias"
+                    onPress={
+                      formikProps.values.paymentAlias ? (
+                        formikProps.handleSubmit
+                      ) : (
+                        () => alert('No alias')
+                      )
+                    }
                     styles={{
-                      text: [globalStyles.buttonLabel, styles.buttonLabel, globalStyles.buttonLabelContainer],
-                      container: globalStyles.label
+                      container: [globalStyles.button, styles.button]
                     }}
+                    highlightColor="#086CB2"
                   />
-                }
-                onPress={
-                  formikProps.values.paymentAlias ? (
-                    formikProps.handleSubmit
-                  ) : (
-                    () => alert('No alias')
-                  )
-                }
-                styles={{
-                  container: [globalStyles.button, styles.button]
-                }}
-                highlightColor="#086CB2"
-              />
-            </View>
-          )}
-        </Formik>
-      </SafeAreaView>
-    </Animated.View>
+                </View>
+              )}
+            </Formik>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#258FD9'
-  },
-  buttonLabel: {
-    marginRight: '5%'
   },
   textInput: {
     padding: '2%',

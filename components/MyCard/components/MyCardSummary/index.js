@@ -2,21 +2,22 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import MyLabel from '../../../MyLabel';
 import { scaleSize } from '../../../../aux/dimensions';
-import { colorLuminance, isDark, formatter } from '../../../../aux/functions';
+import { formatter, getLuminance } from '../../../../aux/functions';
+import { getTotal } from './utils';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
 const MyCardSummary = ({ payments, color }) => {
+  const { isDark } = useTheme();
 
-  const getTotal = (acc, payment) => acc + parseInt(payment.paymentTotal);
   const lastPayment = payments && payments[payments.length - 1];
 
   const lastPaymentTotal = formatter.format(parseInt(lastPayment?.paymentTotal));
 
   const styles = StyleSheet.create({
     container: {
+      marginTop: '2%',
       padding: '2%',
-      marginTop: scaleSize(3),
-      marginBottom: '10%',
-      backgroundColor: colorLuminance(color, isDark(color) ? 0.5 : -0.1),
+      backgroundColor: getLuminance(color, isDark),
       borderRadius: 10,
       width: '100%'
     },
@@ -42,7 +43,7 @@ const MyCardSummary = ({ payments, color }) => {
       />
       <MyLabel
         text={
-          `Card total: ${formatter.format(payments ? payments.reduce(getTotal, 0) : 0)}`
+          `Card total: ${formatter.format(payments ? getTotal(payments) : 0)}`
         }
         styles={labelStyles}
       />

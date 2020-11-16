@@ -1,153 +1,137 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, Animated, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Formik } from 'formik';
-import { AntDesign } from '@expo/vector-icons';
-import ColorPicker from './components/ColorPicker';
+import { AntDesign, Octicons } from '@expo/vector-icons';
+
 import MyButton from '../../../MyButton';
 import MyLabel from '../../../MyLabel';
-import { colorLuminance, isDark } from '../../../../aux/functions';
-import { titleFont, subtitleFontLarge, scaleSize } from '../../../../aux/dimensions';
+import MyTextInput from '../../../MyTextInput';
+import { getLuminance } from '../../../../aux/functions';
+import { titleFont, subtitleFontLarge } from '../../../../aux/dimensions';
+import { useKeyboardAwareness } from '../../../../aux/hooks';
 import { globalStyles } from '../../../../aux/globalStyles';
 import { Slide } from '../../../../aux/animations';
-import { Octicons } from '@expo/vector-icons';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
-const colors = {
-  red: '#EF3939',
-  blue: '#33ADFF',
-  green: '#80D455',
-  gold: '#EBC352',
-  black: '#242424',
-  platinum: '#ADBBCF',
-  turquoise: '#37DAC1'
-};
+import ColorPicker from './components/ColorPicker';
 
 const Personalization = ({ addCardData, nextStep, card }) => {
-
   const [submit, setSubmit] = useState({ dismount: false });
+  const { bottom, handleKeyboardWillHide, handleKeyboardWillShow } = useKeyboardAwareness();
+  const { isDark: isDarkMode, colors } = useTheme();
+  const cardColor = colors.cardColors[card.color];
 
-  const setColor = color => {
+  const setColor = (color) => {
     addCardData({ color });
   };
 
-  const onSubmit = values => setSubmit({dismount: true, values});
+  const onSubmit = (values) => setSubmit({ dismount: true, values });
 
   const onDismountCallback = () => {
     addCardData(submit.values);
     nextStep();
-  }
+  };
 
-  const colorVariant1 = card.color && colorLuminance(card.color, isDark(card.color) ? 0.5 : -0.1);
-  const colorVariant2 = colorVariant1 && colorLuminance(colorVariant1, isDark(colorVariant1) ? 0.5 : -0.3);
+  const colorVariant1 = cardColor && getLuminance(cardColor, isDarkMode)
+  const colorVariant2 = colorVariant1 && getLuminance(colorVariant1, isDarkMode)
 
   const styles = StyleSheet.create({
     container: {
       padding: '10%'
     },
     title: {
-      marginRight: '5%'
+      marginRight: '5%',
     },
     formContainer: {
-      alignItems: 'center'
+      alignItems: 'center',
     },
     button: {
-      backgroundColor: colorVariant1
+      backgroundColor: colorVariant1,
     },
     textInput: {
       borderColor: colorVariant1 || '#D7D7D7',
       borderWidth: 4,
       borderRadius: 10,
-      padding: '2%'
+      padding: '2%',
     },
     colorPicker: {
       backgroundColor: colorVariant1,
       padding: '5%',
-      borderRadius: 100
-    }
+      borderRadius: 100,
+    },
   });
 
-  return(
-    <Slide
-      onDismountCallback={onDismountCallback}
-      dismount={submit.dismount}
-    >
-    <View style={[globalStyles.container, styles.container]}>
-        <MyLabel
-          text="My New Card"
-          styles={{
-            text: [globalStyles.title, styles.title],
-            container: [globalStyles.titleContainer]
-          }}
-          Icon={
-            <AntDesign
-              color="white"
-              name="form"
-              size={titleFont}
-            />
-          }
-        />
-      <ColorPicker
-        selectedColor={card.color}
-        highlightColor={colorVariant2}
-        colors={colors}
-        setColor={setColor}
-        containerStyle={styles.colorPicker}
-      />
-      <Formik
-        initialValues={{
-          cardName: ''
-        }}
-        onSubmit={onSubmit}
-      >
-        {(formikProps) => (
-          <View style={styles.formContainer}>
-            <TextInput
-              placeholderTextColor="white"
-              textAlign="center"
-              style={[globalStyles.textInput, styles.textInput]}
-              selectionColor="white"
-              placeholder="New card name"
-              onChangeText={formikProps.handleChange('cardName')}
-              value={formikProps.values.cardName}
-            />
-            <MyButton
-              onPress={
-                !formikProps.values.cardName ? (
-                  () => alert('No card name entered')
-                ) : !card.color ? (
-                  () => alert('No color selected')
-                ) : (
-                  formikProps.handleSubmit
-                )
-              }
-              content={
-                <MyLabel
-                  Icon={
-                    <Octicons
-                      name="chevron-right"
-                      size={subtitleFontLarge}
-                      color="white"
-                      style={{ marginLeft: '5%' }}
-                    />
-                  }
-                  text="Personalize"
-                  styles={{
-                    text: globalStyles.buttonLabel,
-                    container: [globalStyles.label, globalStyles.buttonLabelContainer]
-                  }}
+  return (
+    <Slide onDismountCallback={onDismountCallback} dismount={submit.dismount}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <Animated.View style={[globalStyles.centered, styles.container, { bottom }]}>
+          <MyLabel
+            text="My New Card"
+            styles={{
+              text: [globalStyles.title, styles.title],
+              container: [globalStyles.titleContainer],
+            }}
+            Icon={<AntDesign color="white" name="form" size={titleFont} />}
+          />
+          <ColorPicker
+            selectedColor={cardColor}
+            highlightColor={colorVariant2}
+            setColor={setColor}
+            containerStyle={styles.colorPicker}
+          />
+          <Formik
+            initialValues={{
+              cardName: '',
+            }}
+            onSubmit={onSubmit}
+          >
+            {(formikProps) => (
+              <View style={styles.formContainer}>
+                <MyTextInput
+                  handleKeyboardWillHide={handleKeyboardWillHide}
+                  handleKeyboardWillShow={handleKeyboardWillShow}
+                  style={styles.textInput}
+                  placeholder="New card name"
+                  onChangeText={formikProps.handleChange('cardName')}
+                  value={formikProps.values.cardName}
                 />
-              }
-              styles={{
-                container: [globalStyles.button, styles.button]
-              }}
-              highlightColor={colorVariant2}
-            />
-          </View>
-        )}
-      </Formik>
-    </View>
+                <MyButton
+                  onPress={
+                    !formikProps.values.cardName
+                      ? () => alert('No card name entered')
+                      : !cardColor
+                      ? () => alert('No color selected')
+                      : formikProps.handleSubmit
+                  }
+                  content={(
+                    <MyLabel
+                      Icon={(
+                        <Octicons
+                          name="chevron-right"
+                          size={subtitleFontLarge}
+                          color="white"
+                          style={{ marginLeft: '5%' }}
+                        />
+                      )}
+                      text="Personalize"
+                      styles={{
+                        text: globalStyles.buttonLabel,
+                        container: [globalStyles.label, globalStyles.buttonLabelContainer],
+                      }}
+                    />
+                  )}
+                  styles={{
+                    container: [globalStyles.button, styles.button],
+                  }}
+                  highlightColor={colorVariant2}
+                />
+              </View>
+            )}
+          </Formik>
+        </Animated.View>
+      </TouchableWithoutFeedback>
     </Slide>
   );
 };
 
 export default Personalization;
-

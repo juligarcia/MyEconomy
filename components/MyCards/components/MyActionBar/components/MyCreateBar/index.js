@@ -1,49 +1,34 @@
 import React from 'react';
-import {
-  StyleSheet,
-  useWindowDimensions,
-  View,
-  ScrollView,
-  TouchableWithoutFeedback,
-  TextInput,
-  Animated
-} from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons'; 
-import { scaleSize, subtitleFontLarge, titleFont } from '../../../../../../aux/dimensions';
+import { View, TouchableWithoutFeedback } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+
+import { titleFont } from '../../../../../../aux/dimensions';
 import { globalStyles } from '../../../../../../aux/globalStyles';
 import MyLabel from '../../../../../MyLabel';
 
-const MyCreateBar = ({ create }) => (
-  <TouchableWithoutFeedback onPress={create}>
-    <View style={[globalStyles.centered, styles.container]}>
-      <FontAwesome style={styles.cardIcon} name="credit-card-alt" size={titleFont} color="#239023" />
-      <MyLabel
-        text="Create card!"
-        styles={{
-          text: [globalStyles.subtitle, styles.subtitle]
-        }}
-      />
-    </View>
-  </TouchableWithoutFeedback>
-);
+import createStyles from './styles';
 
-const styles = StyleSheet.create({
-  container: {
-    borderBottomRightRadius: 10,
-    borderTopRightRadius: 10,
-    height: scaleSize(8, true),
-    width: scaleSize(90),
-    backgroundColor: '#84E184',
-    flexDirection: 'row'
-  },
-  cardIcon: {
-    position: 'absolute',
-    right: '85%'
-  },
-  subtitle: {
-    color: '#239023'
-  }
-});
+const MyCreateBar = ({ create }) => {
+  const { styles, colors } = createStyles();
+  const { createCard } = colors;
+  return (
+    <TouchableWithoutFeedback onPress={create}>
+      <View style={[globalStyles.centered, styles.container]}>
+        <FontAwesome
+          style={styles.cardIcon}
+          name="credit-card-alt"
+          size={titleFont}
+          color={createCard.foreground1}
+        />
+        <MyLabel
+          text="Create card!"
+          styles={{
+            text: [globalStyles.subtitle, styles.subtitle],
+          }}
+        />
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
 
 export default MyCreateBar;

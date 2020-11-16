@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import CircularColorButton from './components/CircularColorButton';
+import { useTheme } from '../../../../../../theme/ThemeProvider';
 
-const ColorPicker = ({ colors, setColor, selectedColor, containerStyle, highlightColor }) => {
+const ColorPicker = ({ setColor, selectedColor, containerStyle, highlightColor }) => {
+  const { colors } = useTheme();
 
-  const colorLabels = Object.keys(colors);
-  const colorValues = Object.values(colors);
+  const colorLabels = Object.keys(colors.cardColors);
+  const colorValues = Object.values(colors.cardColors);
 
   const setPickedColor = colorLabel => () => {
     setColor(colorLabel);
@@ -19,7 +21,7 @@ const ColorPicker = ({ colors, setColor, selectedColor, containerStyle, highligh
           key={index}
           selected={selectedColor == colorValue}
           colorValue={colorValue}
-          onPress={setPickedColor(colorValue)}
+          onPress={setPickedColor(colorLabels[index])}
         />
       ))}
     </View>

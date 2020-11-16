@@ -1,69 +1,48 @@
-import React, { useRef, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  TextInput
-} from 'react-native';
-import { scaleSize, titleFont } from '../../../../../../aux/dimensions';
-import { globalStyles } from '../../../../../../aux/globalStyles';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+
+import { scaleSize } from '../../../../../../aux/dimensions';
+import { globalStyles } from '../../../../../../aux/globalStyles';
 import MyHelp from '../../../../../MyHelp';
 import MyLabel from '../../../../../MyLabel';
+import MyTextInput from '../../../../../MyTextInput';
+import { useTheme } from '../../../../../../theme/ThemeProvider';
 
-const MySearchBar = ({  }) => {
+import createStyles from './styles';
+
+const MySearchBar = () => {
   const [anchor, setAnchor] = useState(null);
+  const { styles, colors } = createStyles();
+
   return (
     <View ref={setAnchor} style={[globalStyles.centered, styles.container]}>
       <MyHelp
         buttonStyle={styles.help}
-        content={
+        content={(
           <MyLabel
             text="Type the payment name you want to find, and we'll find it for you!"
             styles={{
-              text: [globalStyles.smallSubtitle, styles.helpContent]
+              text: [globalStyles.smallSubtitle, styles.helpContent],
             }}
           />
-        }
+        )}
         anchor={anchor}
       />
-      <FontAwesome5 style={styles.searchIcon} name="search" size={titleFont} color="gray" />
-      <TextInput
-        placeholderTextColor="gray"
+      <FontAwesome5
+        style={styles.searchIcon}
+        name="search"
+        size={scaleSize(6)}
+        color={colors.textSecondary}
+      />
+      <MyTextInput
+        placeholderTextColor={colors.textSecondary}
         placeholder="Search for payment"
-        textAlign="center"
-        style={[globalStyles.textInput, styles.textInput]}
-        selectionColor="gray"
+        style={styles.textInput}
+        selectionColor={colors.textSecondary}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    height: scaleSize(8, true),
-    width: scaleSize(90),
-    backgroundColor: '#D7D7D7',
-    flexDirection: 'row'
-  },
-  help: {
-    top: -scaleSize(7),
-    right:scaleSize(22)
-  },
-  textInput: {
-    color: 'gray',
-    width: scaleSize(20, true)
-  },
-  searchIcon: {
-    position: 'absolute',
-    right: '85%'
-  },
-  sortIcon: {
-    position: 'absolute',
-    left: '85%'
-  },
-  helpContent: {
-    color: 'gray'
-  }
-});
 
 export default MySearchBar;

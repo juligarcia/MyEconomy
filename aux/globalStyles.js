@@ -9,7 +9,15 @@ import {
   screenHeight
 } from './dimensions';
 
+export const globalBorderRadius = 10;
+
 export const globalStyles = StyleSheet.create({
+  noMargin: {
+    marginTop: 0,
+    marginBottom: 0, 
+    marginLeft: 0,
+    marginTop: 0
+  },
   title: {
     color: 'white',
     fontWeight: '600',
@@ -35,7 +43,8 @@ export const globalStyles = StyleSheet.create({
     color: 'white',
     marginBottom: '5%',
     marginTop: '5%',
-    fontSize: subtitleFontLarge
+    fontSize: subtitleFontLarge,
+    maxWidth: scaleSize(60)
   },
   container: {
     justifyContent: 'center',

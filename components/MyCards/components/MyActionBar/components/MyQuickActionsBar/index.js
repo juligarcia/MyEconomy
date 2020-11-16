@@ -1,59 +1,44 @@
 import React from 'react';
-import {
-  StyleSheet,
-  useWindowDimensions,
-  View,
-  ScrollView,
-  TouchableWithoutFeedback,
-  TextInput,
-  Animated,
-  Switch
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import { scaleSize, subtitleFontLarge, titleFontLarge } from '../../../../../../aux/dimensions';
-import { globalStyles } from '../../../../../../aux/globalStyles';
-import { Ionicons } from '@expo/vector-icons'; 
+import { View, Switch } from 'react-native';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
-const MyQuickActionsBar = ({ toggleMode, mode='light'}) => {
-  const iconName = mode === 'dark' ? 'ios-moon' : 'ios-sunny';
-  const iconColor = mode === 'dark' ? '#2E2EB8' : '#FFD11A';
+import { scaleSize } from '../../../../../../aux/dimensions';
+import { globalStyles } from '../../../../../../aux/globalStyles';
+import { DARK_THEME, LIGHT_THEME } from '../../../../../../texts/constants';
+import { useTheme } from '../../../../../../theme/ThemeProvider';
+
+import createStyles from './styles';
+import { SUN_ICON, MOON_ICON } from './constants';
+
+const MyQuickActionsBar = () => {
+  const { setScheme, isDark } = useTheme();
+  const { colors, styles } = createStyles();
+  const { config } = colors;
+
+  const iconName = isDark ? MOON_ICON : SUN_ICON;
+  const toggleMode = () => (isDark ? setScheme(LIGHT_THEME) : setScheme(DARK_THEME));
+
   return (
     <View style={[globalStyles.centered, styles.container]}>
-      <MaterialIcons style={styles.actionsIcon} name="settings" size={titleFontLarge} color="#336499" />
+      <MaterialIcons
+        style={styles.actionsIcon}
+        name="settings"
+        size={scaleSize(7)}
+        color={config.foreground1}
+      />
       <View style={styles.switch}>
         <Switch
-          ios_backgroundColor='#9FBEDF'
+          trackColor={{
+            true: colors.modeAccent,
+          }}
+          ios_backgroundColor={config.background}
           onValueChange={toggleMode}
-          value={mode}
+          value={isDark}
         />
-        <Ionicons style={styles.modeIcon} name={iconName} size={titleFontLarge} color={iconColor} />
+        <Ionicons style={styles.modeIcon} name={iconName} size={scaleSize(7)} color={colors.modeAccent} />
       </View>
     </View>
-)};
-
-const styles = StyleSheet.create({
-  container: {
-    borderBottomLeftRadius: 10,
-    borderTopLeftRadius: 10,
-    height: scaleSize(8, true),
-    width: scaleSize(90),
-    backgroundColor: '#9FBEDF',
-    flexDirection: 'row'
-  },
-  actionsIcon: {
-    position: 'absolute',
-    right: '85%'
-  },
-  modeIcon: {
-    marginLeft: '10%'
-  },
-  switch: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#336499',
-    padding: '2%',
-    borderRadius: 100
-  }
-});
+  );
+};
 
 export default MyQuickActionsBar;

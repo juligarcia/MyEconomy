@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
-import Steps from './steps';
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+
 import StepCounter from '../StepCounter';
 import MyButton from '../MyButton';
-import { AntDesign } from '@expo/vector-icons'; 
 import { scaleSize } from '../../aux/dimensions';
+import { globalStyles } from '../../aux/globalStyles';
+
+import Steps from './steps';
 
 const NewPayment = ({ addPayment, onClose, incId, nextId }) => {
-
   const [stepNumber, setStep] = useState(0);
   const [payment, updatePayment] = useState({});
   const [done, setDone] = useState(false);
@@ -21,59 +24,54 @@ const NewPayment = ({ addPayment, onClose, incId, nextId }) => {
   const isLastStep = Steps.length - 1 === stepNumber;
 
   const nextStep = () => {
-    if(isLastStep) setDone(true);
-    else setStep(prevState => prevState + 1);
+    if (isLastStep) setDone(true);
+    else setStep((prevState) => prevState + 1);
   };
 
   const Step = Steps[stepNumber];
 
-  const addPaymentData = data => {
-    updatePayment(prevState => Object.assign({}, prevState, data, { key: nextId }));
+  const addPaymentData = (data) => {
+    updatePayment((prevState) => ({ ...prevState, ...data, key: nextId }));
   };
 
   useEffect(() => {
     if (done) addCreatedPayment();
-  }, [done])
+  }, [done]);
 
-  return(
-    <SafeAreaView style={styles.container}>
-      <MyButton
-        onPress={onClose}
-        styles={{
-          container: styles.button
-        }}
-        content={
-          <AntDesign
-            style={styles.icon}
-            name="close"
-            size={scaleSize(7)}
-            color="white"
-          />
-        }
-        highlightColor="#258FD9"
-      />
-      <Step addPaymentData={addPaymentData} nextStep={nextStep} />
-      <StepCounter containerStyle={styles.stepCounter} step={stepNumber} totalSteps={Steps.length} />
-    </SafeAreaView>
+  return (
+    <TouchableWithoutFeedback onPress={onClose}>
+      <View style={[globalStyles.container, { justifyContent: 'flex-end' }]}>
+        <TouchableWithoutFeedback>
+          <View style={styles.container}>
+            <Step addPaymentData={addPaymentData} nextStep={nextStep} />
+            <StepCounter containerStyle={styles.stepCounter} step={stepNumber} totalSteps={Steps.length} />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%'
+    width: '100%',
+    height: '87%',
+    backgroundColor: '#0E78C2',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   button: {
     position: 'absolute',
     zIndex: 1,
-    marginTop: '15%',
-    marginLeft: '5%',
+    marginTop: scaleSize(5),
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10
+    borderRadius: 10,
+    marginLeft: scaleSize(5),
   },
   stepCounter: {
-    bottom: '20%'
-  }
-})
+    bottom: '20%',
+  },
+});
 
 export default NewPayment;
